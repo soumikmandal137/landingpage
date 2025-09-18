@@ -3,6 +3,7 @@ import { Box, IconButton, Typography, Link } from "@mui/material";
 import { Facebook, Instagram, Email, Phone } from "@mui/icons-material";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import XIcon from "@mui/icons-material/X";
+import Logo from "../../public/Logo.svg"
 import mastercard from "../assets/footer/mastercard.png";
 import gpay from "../assets/footer/gpay.png";
 import visa from "../assets/footer/visa.png";
@@ -20,12 +21,11 @@ const Footer = () => {
         py: 6,
       }}
     >
-      {/* Column 1: Branding */}
+  
       <Box sx={{ maxWidth: "25%", flex: "0 0 25%", pr: 2, mb: 4 }}>
-        <Typography variant="h6" sx={{ fontWeight: "bold", color: "#f57c00" }}>
-          FOODI
-        </Typography>
-        <Typography variant="body2" sx={{ mt: 2 }} style={{color:"#9C9D9B",fontSize:"16px",lineHeight:"1.2"}}>
+       <img src={Logo} alt="" /> 
+
+       <Typography variant="body2" sx={{ mt: 2 }} style={{color:"#9C9D9B",fontSize:"16px",lineHeight:"1.2"}}>
           Lorem ipsum dolor sit amet consectetur. Tristique cursus sem nibh nec
           volutpat. Turpis tortor nisi proin. Ligula viverra sem leo ultricies.
         </Typography>
