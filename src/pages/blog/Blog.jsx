@@ -10,7 +10,72 @@ const blog = [
     id: 1,
     user: {
       role: "Admin",
-      date: "17 June 2025",
+      date: "17June2025",
+      comments: "comments",
+    },
+    name: "10  Benefits of Doing a Detox",
+    description: "Savor our latest blog where we serve up delicious recipes, insider kitchen tips, and design inspirations that blend mouthwatering flavors with a delightful dining experience",
+    Read:"Read More",
+    img: card1,
+  },
+
+    {
+    id: 1,
+    user: {
+      role: "Admin",
+      date: "17June2025",
+      comments: "comments",
+    },
+    name: "10  Benefits of Doing a Detox",
+    description: "Savor our latest blog where we serve up delicious recipes, insider kitchen tips, and design inspirations that blend mouthwatering flavors with a delightful dining experience",
+    Read:"Read More",
+    img: card1,
+  },
+
+    {
+    id: 1,
+    user: {
+      role: "Admin",
+      date: "17June2025",
+      comments: "comments",
+    },
+    name: "10  Benefits of Doing a Detox",
+    description: "Savor our latest blog where we serve up delicious recipes, insider kitchen tips, and design inspirations that blend mouthwatering flavors with a delightful dining experience",
+    Read:"Read More",
+    img: card1,
+  },
+
+    {
+    id: 1,
+    user: {
+      role: "Admin",
+      date: "17June2025",
+      comments: "comments",
+    },
+    name: "10  Benefits of Doing a Detox",
+    description: "Savor our latest blog where we serve up delicious recipes, insider kitchen tips, and design inspirations that blend mouthwatering flavors with a delightful dining experience",
+    Read:"Read More",
+    img: card1,
+  },
+
+    {
+    id: 1,
+    user: {
+      role: "Admin",
+      date: "17June2025",
+      comments: "comments",
+    },
+    name: "10  Benefits of Doing a Detox",
+    description: "Savor our latest blog where we serve up delicious recipes, insider kitchen tips, and design inspirations that blend mouthwatering flavors with a delightful dining experience",
+    Read:"Read More",
+    img: card1,
+  },
+
+    {
+    id: 1,
+    user: {
+      role: "Admin",
+      date: "17June2025",
       comments: "comments",
     },
     name: "10  Benefits of Doing a Detox",
@@ -65,6 +130,35 @@ const blog = [
         </Typography>
       </Box>
 
+
+
+  <Box sx={{ textAlign: "center", paddingTop: "125px" }}>
+        <Box>
+          <Typography
+            sx={{ color: "#fff", fontSize: "36px", fontWeight: "600" }}
+          >
+            Latest news & blog
+          </Typography>
+        </Box>
+
+        <Box>
+          <Typography
+            variant="body2"
+            sx={{
+              mt: 2,
+              maxWidth: "720px",
+              mx: "auto",
+              color: "#9C9D9B",
+              fontSize: "16px",
+              lineHeight: 1.6,
+            }}
+          >
+            Lorem ipsum dolor sit amet consectetur. Dolor elit vitae nunc
+            varius. Facilisis eget eros sit semper sit enim. Turpis aliquet sit
+            ac eu ultrices ut. Sagittis vestibulum et quis non massa netus.
+          </Typography>
+        </Box>
+      </Box>
 
 
 

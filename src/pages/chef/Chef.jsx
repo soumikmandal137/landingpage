@@ -153,7 +153,7 @@ const Chef = () => {
           <Typography
             sx={{ color: "#fff", fontSize: "36px", fontWeight: "600" }}
           >
-            {" "}
+        
             Our World Class Chef
           </Typography>
         </Box>
