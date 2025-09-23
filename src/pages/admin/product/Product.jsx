@@ -15,22 +15,22 @@ import {
 import { useNavigate } from "react-router-dom";
 import API from "../../../api/Axiosintance";
 import TableComponent from "../../../components/Tablecomponents";
-import { productList } from "../../../hooks/redux/useProducts";
+// import { productList } from "../../../hooks/redux/useProducts";
 import { Edit, Delete } from '@mui/icons-material';
 
 
 
 const handleDelete = async (id) => {
   console.log("Deleting id:", id); 
-  try {
-    setIsDeleting(true);
-    await API.delete(`/products/remove/${id}`);
-    queryClient.invalidateQueries(["products"]);
-  } catch (err) {
-    console.error("Delete failed:", err);
-  } finally {
-    setIsDeleting(false);
-  }
+  // try {
+  //   setIsDeleting(true);
+  //   await API.delete(`/products/remove/${id}`);
+  //   queryClient.invalidateQueries(["products"]);
+  // } catch (err) {
+  //   console.error("Delete failed:", err);
+  // } finally {
+  //   setIsDeleting(false);
+  // }
 };
 
 
@@ -55,10 +55,7 @@ const Product = () => {
 const perpage=5
 
 
-const { data, isLoading, isError, error } = productList(page, perpage);
-const products =data?.data
-const totalPages =data?.totalPages
-console.log("data",data);
+
 
 
 
@@ -67,6 +64,8 @@ const columns = [
   { field: "_id", headerName: "ID" },
   { field: "title", headerName: "Title" },
   { field: "description", headerName: "Description" },
+  {field: "category",headerName:"category"},
+  {field: "price",headerName:"price"},
   { field: "status", headerName: "Status" },
 ];
 
@@ -121,10 +120,7 @@ const columns = [
 
 <TableComponent
         columns={columns}
-        rows={products}
         actions={renderActions}
-        page={page}
-        totalPages={totalPages}
         onPageChange={(_, value) => setPage(value)}
         loading={isDeleting}
       />
@@ -137,6 +133,8 @@ const columns = [
           <DialogContentText>
             <Typography>Title: {viewDetails?.title}</Typography>
             <Typography>Description: {viewDetails?.description}</Typography>
+            <Typography>Category: {viewDetails?.category}</Typography>
+            <Typography>Price: {viewDetails?.price}</Typography>
           </DialogContentText>
         </DialogContent>
       </Dialog>

@@ -13,6 +13,8 @@ import Dashboard from "../pages/admin/Dashboard";
 import AdminWrapper from "../layout/admin/Wrapper";
 import Product from "../pages/admin/product/Product";
 import ProductAdd from "../pages/admin/product/ProductAdd";
+import User from "../pages/admin/user/User";
+import UserAdd from "../pages/admin/user/UserAdd";
 
 const Routes = createBrowserRouter([
   {
@@ -73,6 +75,27 @@ const Routes = createBrowserRouter([
         path: "add",
         element: <ProductAdd />,
       },
+
+{
+            path: "productedit/:id",
+            element: <ProductAdd />,
+          },
+          
+        
+          {
+            path: "userlist",
+            element: <User />,
+          },
+          {
+            path: "useradd",
+            element: <UserAdd />,
+          },
+          {
+            path: "useredit/:id",
+            element: <UserAdd />,
+          },
+
+
     ],
   },
 ]);
