@@ -78,16 +78,13 @@ const Navbar = () => {
     }
   };
 
+const addtocart= ()=>{
+   navigate('/addtocart'); 
+}
+
+
   return (
-    // <Box
-    //   sx={{
-    //     minHeight: "10vh",
-    //     display: "flex",
-    //     justifyContent: "center",
-    //     alignItems: "flex-start",
-    //     pt: 2,
-    //   }}
-    // >
+  
     <>
       <AppBar
         position="sticky"
@@ -106,32 +103,7 @@ const Navbar = () => {
         }}
       >
         <Toolbar sx={{ display: "flex" }}>
-          {/* Left: Logo */}
-          {/* <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <Box
-            sx={{
-              width: 32,
-              height: 32,
-              bgcolor: "#f97316",
-              borderRadius: "6px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontWeight: "bold",
-              color: "white",
-              fontSize: "18px",
-            }}
-          >
-            F
-          </Box>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{ color: "#f97316", fontWeight: "bold" }}
-          >
-            FOODI
-          </Typography>
-        </Box> */}
+        
 
           <Box>
             <img src={Logo} alt="" />
@@ -153,6 +125,7 @@ const Navbar = () => {
               { name: "Chef", path: "/chef" },
               { name: "Blog", path: "/blog" },
               { name: "Contact", path: "/contact" },
+            
             ].map((item) => (
               <Button
                 onClick={() => navigate(item.path)}
@@ -171,8 +144,9 @@ const Navbar = () => {
 
           {/* Right: Cart + Login */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <IconButton sx={{ color: "white" }}>
-              <ShoppingCartIcon />
+            <IconButton  sx={{ color: "white" }} onClick={addtocart}>
+            
+              <ShoppingCartIcon  />
             </IconButton>
             {useDetails ? (
               <Button

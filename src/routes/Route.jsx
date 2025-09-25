@@ -15,6 +15,10 @@ import Product from "../pages/admin/product/Product";
 import ProductAdd from "../pages/admin/product/ProductAdd";
 import User from "../pages/admin/user/User";
 import UserAdd from "../pages/admin/user/UserAdd";
+import Addblog from "../pages/admin/blog/Addblog";
+import Blogadmin from "../pages/admin/blog/Blog";
+import Addchef from "../pages/admin/chef/Addchef";
+import Chefadmin from "../pages/admin/chef/Chef";
 
 const Routes = createBrowserRouter([
   {
@@ -68,34 +72,51 @@ const Routes = createBrowserRouter([
         element: <Dashboard />,
       },
       {
-        path: "list",
+        path: "product/list",
         element: <Product />,
       },
-       {
-        path: "add",
+      {
+        path: "product/add",
         element: <ProductAdd />,
       },
 
-{
-            path: "productedit/:id",
-            element: <ProductAdd />,
-          },
-          
-        
-          {
-            path: "userlist",
-            element: <User />,
-          },
-          {
-            path: "useradd",
-            element: <UserAdd />,
-          },
-          {
-            path: "useredit/:id",
-            element: <UserAdd />,
-          },
+      {
+        path: "productedit/:id",
+        element: <ProductAdd />,
+      },
 
+      {
+        path: "userlist",
+        element: <User />,
+      },
+      {
+        path: "useradd",
+        element: <UserAdd />,
+      },
+      {
+        path: "useredit/:id",
+        element: <UserAdd />,
+      },
 
+      {
+        path: "chef/add",
+        element: <Addchef />,
+      },
+
+      {
+        path: "chef/list",
+        element: <Chefadmin />,
+      },
+
+      {
+        path: "blog/add",
+        element: <Addblog />,
+      },
+
+      {
+        path: "blog/list",
+        element: <Blogadmin />,
+      },
     ],
   },
 ]);

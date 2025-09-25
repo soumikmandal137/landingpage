@@ -20,7 +20,7 @@ const blog = [
   },
 
     {
-    id: 1,
+    id: 2,
     user: {
       role: "Admin",
       date: "17June2025",
@@ -33,7 +33,7 @@ const blog = [
   },
 
     {
-    id: 1,
+    id: 3,
     user: {
       role: "Admin",
       date: "17June2025",
@@ -46,7 +46,7 @@ const blog = [
   },
 
     {
-    id: 1,
+    id: 4,
     user: {
       role: "Admin",
       date: "17June2025",
@@ -59,7 +59,7 @@ const blog = [
   },
 
     {
-    id: 1,
+    id: 5,
     user: {
       role: "Admin",
       date: "17June2025",
@@ -72,7 +72,7 @@ const blog = [
   },
 
     {
-    id: 1,
+    id: 6,
     user: {
       role: "Admin",
       date: "17June2025",

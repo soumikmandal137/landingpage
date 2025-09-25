@@ -1,26 +1,22 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
-  // Avatar,
+  Avatar,
   Box,
   Button,
+  FormControl,
+  MenuItem,
+  Select,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
-import TextareaAutosize from "@mui/material/TextareaAutosize";
 import React, { useEffect, useState } from "react";
 import * as yup from "yup";
-
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import API from "../../../api/Axiosintance";
 import { toast } from "sonner";
+import { supabase } from "../../../hooks/utils/supabaseClient";
 
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import { Key } from "lucide-react";
 
 const schema = yup.object().shape({
   title: yup.string().trim().required("Title is required"),
@@ -34,150 +30,211 @@ const schema = yup.object().shape({
 });
 
 const categoryOptions = [
-  { lable: "Indian", value: "indian" },
+  { label: "Indian", value: "indian" },
   { label: "Mexican", value: "mexican" },
   { label: "Italian", value: "italian" },
   { label: "Chinese", value: "chinese" },
   { label: "Bengali", value: "bengali" },
   { label: "Arabian", value: "arabian" },
-  { label: "Japanese", value: "Japanese" },
+  { label: "Japanese", value: "japanese" },
 ];
+
 const ProductAdd = () => {
   const navigate = useNavigate();
-  const [photo, setPhoto] = useState(null);
-  const [photoURL, setPhotoURL] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
-    watch,
-    setValue,
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
       title: "",
       description: "",
       category: "",
-      price:"",
-      image: "",
+      price: "",
     },
   });
 
-  const handlePhotoChange = (e) => {
-    const file = e.target.files[0];
+  const handleFileChange = (event) => {
+    const file = event.target.files?.[0];
     if (file) {
-      setPhoto(file);
-      setPhotoURL(URL.createObjectURL(file));
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    } else {
+      setSelectedFile(null);
+      setPreviewUrl(null);
     }
   };
 
   const onSubmit = async (data) => {
-    console.log("form data", data);
+    // console.log("Form Data:", { ...data, image: selectedFile });
+    if (selectedFile) {
+      const fileExt = selectedFile.name.split(".").pop();
+      const fileName = `${Date.now()}.${fileExt}`;
+      const filePath = `${fileName}`;
+      // console.log("Filepath",filePath);
+      const {error:uploadfileerror} = await supabase.storage.from("product-images").upload(filePath,selectedFile)
+      
+      if(uploadfileerror){
+        toast.error(uploadfileerror.message)
+        console.log("-----",uploadfileerror);
+        return
+        
+      }
+
+    }
   };
 
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
+
   return (
-    <Box sx={{}}>
-      <Typography variant="h5" gutterBottom>
+    <Box>
+      <Typography variant="h5" gutterBottom fontWeight={600}>
         Add Food
       </Typography>
-      <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-        <Stack
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-            width: "100%",
-            gap: 4,
-          }}
-        >
-          <Box sx={{ display: "flex", flexDirection: "column", width: "60%" }}>
+
+      <Box
+        component="form"
+        onSubmit={handleSubmit(onSubmit)}
+        sx={{
+          mt: 2,
+          p: 3,
+          borderRadius: 2,
+          boxShadow: 3,
+          bgcolor: "#fff",
+        }}
+      >
+        <Stack direction={{ xs: "column", md: "row" }} spacing={4}>
+          {/* Left Section - Form Fields */}
+          <Stack spacing={3} sx={{ flex: 1 }}>
             <TextField
               label="Title"
+              required
+              placeholder="Enter food title"
               fullWidth
               {...register("title")}
               error={!!errors.title}
               helperText={errors.title?.message}
             />
-            <TextareaAutosize
-              style={{ marginTop: "20px" }}
-              aria-label="Description"
-              placeholder="Description"
-              minRows={5}
+
+            <TextField
+              label="Description"
+              required
+              placeholder="Enter description"
+              fullWidth
+              multiline
+              minRows={4}
               {...register("description")}
               error={!!errors.description}
               helperText={errors.description?.message}
             />
-            <FormControl sx={{ mt: 2 }} size="small">
-              <InputLabel id="demo-select-small-label" sx={{mb: 3}}>category </InputLabel>
-              <Select
-              // sx={{ mt: 2 }} 
-                labelId="demo-select-small-label"
-                id="demo-select-small"
-                {...register("category")}
-                error={!!errors.category}
-                helperText={errors.category?.message}
-              >
-                <MenuItem value="">
-                  <em>Select Options</em>
+
+            <TextField
+              select
+              label="Category"
+              required
+              fullWidth
+              defaultValue=""
+              {...register("category")}
+              error={!!errors.category}
+              helperText={errors.category?.message}
+            >
+              <MenuItem value="">
+                <em>Select Category</em>
+              </MenuItem>
+              {categoryOptions.map((item, i) => (
+                <MenuItem key={i} value={item.value}>
+                  {item.label}
                 </MenuItem>
-                {categoryOptions?.map((item, index) => (
-                  <MenuItem key={index} value={item.value}>
-                    {item.label}
-                  </MenuItem>
-                ))}
-              </Select>
+              ))}
+            </TextField>
 
-            </FormControl>
-
-  <TextField sx={{mt:2}}
+            {/* Price */}
+            <TextField
               label="Price"
+              required
+              placeholder="Enter price"
               fullWidth
               {...register("price")}
               error={!!errors.price}
               helperText={errors.price?.message}
             />
+          </Stack>
 
-
-          </Box>
-          <Box sx={{ display: "flex", flexDirection: "row", width: "40%" }}>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
+          <Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>
+            <Stack
+              spacing={2}
+              alignItems="center"
+              sx={{ width: "100%", maxWidth: 350 }}
             >
               <Box
                 sx={{
-                  width: "300px",
-                  height: "300px",
-                  border: "1px dotted #ccc",
+                  width: "100%",
+                  height: 300,
+                  border: "2px dashed #bbb",
+                  borderRadius: 2,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  flexDirection: "column",
+                  bgcolor: "#fafafa",
+                  "&:hover": {
+                    borderColor: "primary.main",
+                    bgcolor: "#f0f7ff",
+                  },
                 }}
-              ></Box>
-              <Button component="label" variant="outlined" sx={{ mt: 3 }}>
-                Upload Photo
-                <input
-                  type="file"
-                  hidden
-                  accept="image/*"
-                  onChange={handlePhotoChange}
-                />
-              </Button>
-            </Box>
+              >
+                {previewUrl ? (
+                  <>
+                    <Avatar
+                      alt="Preview"
+                      src={previewUrl}
+                      variant="rounded"
+                      sx={{
+                        width: 150,
+                        height: 150,
+                        mb: 1,
+                        borderRadius: 2,
+                      }}
+                    />
+                    <Typography variant="body2" noWrap sx={{ maxWidth: "90%" }}>
+                      {selectedFile?.name}
+                    </Typography>
+                  </>
+                ) : (
+                  <Typography color="textSecondary">
+                    Drag & drop or click to upload
+                  </Typography>
+                )}
+              </Box>
+
+              <input
+                type="file"
+                accept="image/*"
+                id="upload-file"
+                hidden
+                onChange={handleFileChange}
+              />
+              <label htmlFor="upload-file" style={{ width: "100%" }}>
+                <Button variant="contained" component="span" fullWidth>
+                  {previewUrl ? "Change Image" : "Upload Image"}
+                </Button>
+              </label>
+            </Stack>
           </Box>
         </Stack>
-        <Button
-          // fullWidth
-          type="submit"
-          variant="contained"
-          sx={{ mt: 2 }}
-          // disabled={loading}
-        >
-          Save
-        </Button>
+        <Box textAlign="right" mt={4}>
+          <Button type="submit" variant="contained">
+            Save
+          </Button>
+        </Box>
       </Box>
     </Box>
   );
