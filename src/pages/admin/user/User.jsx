@@ -1,147 +1,89 @@
-import React, { useEffect, useState } from "react";
-import {
-  Typography,
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  CircularProgress,
-} from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { RemoveRedEye } from "@mui/icons-material";
+import React, { useState } from "react";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from "@mui/material";
+import TableComponent from "../../../components/Tablecomponents";
 import { useNavigate } from "react-router-dom";
-import API from "../../../api/Axiosintance";
-import { DataGrid } from "@mui/x-data-grid";
-// import TableComponent from "../../../components/Tablecomponents";
-import { Edit, Delete } from "@mui/icons-material";
 
-import { toast } from "sonner";
-import { QueryClient, useQueryClient } from "@tanstack/react-query";
-
-// import { DataGrid } from "@mui/x-data-grid";
-import Paper from "@mui/material/Paper";
-// import { useRemoveusers, userslist } from "../../../hooks/redux/useuser";
-
-
+const handleDelete = async (id) => {
+console.log("Deleting id:", id); 
+};
 
 const User = () => {
-  const navigate = useNavigate();
-  const { data, isLoading, isError, error } = userslist();
-   const queryclient = useQueryClient();
-    const [openDialog, setOpenDialog] = useState(false);
-    const [deleteId, setDeleteId] = useState(null);
-    const products = data?.data;
-  const users = data?.data;
-  console.log("users", users);
-
-     
+    const navigate = useNavigate();
+  const [openViewDialog, setOpenViewDialog] = useState(false);
+  const [viewDetails, setViewDetails] = useState({});
+  const [openDialog, setOpenDialog] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+  const [page,setPage] = useState(1);
+    const [isDeleting, setIsDeleting] = useState(false);
 
   const columns = [
-    { field: "id", headerName: "ID", width: 70 },
-    {
-  field: "name",
-  headerName: "Name",
-  width: 300,
-  renderCell: (params) => (
-    <span>{params.row.name.firstname} {params.row.name.lastname}</span>
-  )
-},
-    { field: "email", headerName: "Email", width: 330 },
-    {
-      field: "username",
-      headerName: "Username",
-      type: "number",
-      width: 150,
-    },
-    {
-      field: "password",
-      headerName: "Password",
-      width: 130,
-    },
-    {
-    field: 'actions',
-    headerName: 'Actions',
-    width: 150,
-    renderCell: (params) => (
-      <Button
-        variant="contained"
-        color="primary"
-        size="small"
-        onClick={() => navigate(`/admin/main/useredit/${params.row.id}`)}
-      >
-        Edit
-      </Button>
-      
-    ),
-  },
- {
-      width: 150,
-      renderCell: (params) => (
-        <Button
-          variant="contained"
+  { field: "_id", headerName: "ID" },
+  { field: "title", headerName: "Title" },
+  { field: "description", headerName: "Description" },
+  {field: "category",headerName:"category"},
+  {field: "price",headerName:"price"},
+  { field: "status", headerName: "Status" },
+];
+
+
+    const renderActions = (row) => (
+      <>
+        <Edit
           color="primary"
-          size="small"
-          onClick={() => {
-            setOpenDialog(true);
-            setDeleteId(params?.row?.id);
-          }}
-        >
-          Delete
-        </Button>
-      ),
-    },
-    ];
+          style={{ cursor: 'pointer', marginRight: 8 }}
+          onClick={() => handleEdit(row._id)}
+        />
+        <Delete
+          color="error"
+          // style={{ cursor: isDeleting ? 'not-allowed' : 'pointer' }}
+          onClick={() => handleDelete(row._id)}
+        />
+      </>
+    );
+  
+      const handleDelete = async () => {
+    try {
+      setIsDeleting(true);
+      await API.delete(`/products/remove${deleteId}`);
 
+    
+      queryClient.invalidateQueries(["products"]);
 
-
-
-  const paginationModel = { page: 0, pageSize: 5 };
-
-  const { mutate: removeusers, isLoading: isDeleting } = useRemoveusers();
-
-  const handleDelete = async () => {
-    removeusers(deleteId, {
-      onSuccess: (response) => {
-        toast("Deleted Successfully");
-         queryclient.invalidateQueries(["userlist"]);
-      },
-      onError: (error) => {
-        toast(error?.response?.data?.message);
-      },
-    });
+      console.log("Deleted product:", deleteId);
+    } catch (err) {
+      console.error("Delete failed:", err);
+    } finally {
+      setIsDeleting(false);
+      setDeleteId(null);
+    }
   };
-
-
-
 
   return (
     <Box>
       <Typography variant="h5" gutterBottom>
-        Product List
+        User List
       </Typography>
 
-      <Paper sx={{ height: 400, width: "100%" }}>
-        <DataGrid
-          columns={columns}
-          rows={users}
-          initialState={{ pagination: { paginationModel } }}
-          pageSizeOptions={[5, 10]}
-          checkboxSelection
-          sx={{ border: 0 }}
-        />
-      </Paper>
+<TableComponent
+        columns={columns}
+        actions={renderActions}
+        onPageChange={(_, value) => setPage(value)}
+        loading={isDeleting}
+      />
+      
+            <Dialog open={openViewDialog} onClose={() => setOpenViewDialog(false)}>
+        <DialogTitle>Product Details</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            <Typography>Title: {viewDetails?.title}</Typography>
+            <Typography>Description: {viewDetails?.description}</Typography>
+            <Typography>Category: {viewDetails?.category}</Typography>
+            <Typography>Price: {viewDetails?.price}</Typography>
+          </DialogContentText>
+        </DialogContent>
+      </Dialog>
 
- <Dialog
-        open={openDialog}
-        onClose={() => {
-          setOpenDialog(false);
-          setDeleteId(null);
-        }}
-      >
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
         <DialogTitle>{"Confirm Deletion"}</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -154,7 +96,6 @@ const User = () => {
             onClick={() => {
               handleDelete();
               setOpenDialog(false);
-              setDeleteId(null);
             }}
             autoFocus
           >
@@ -162,9 +103,6 @@ const User = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
-
-
 
     </Box>
   );

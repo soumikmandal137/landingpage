@@ -68,7 +68,7 @@ const Routes = createBrowserRouter([
     element: <AdminWrapper />,
     children: [
       {
-        path: "dashabord",
+        path: "dashboard",
         element: <Dashboard />,
       },
       {
@@ -86,11 +86,11 @@ const Routes = createBrowserRouter([
       },
 
       {
-        path: "userlist",
+        path: "user/list",
         element: <User />,
       },
       {
-        path: "useradd",
+        path: "user/add",
         element: <UserAdd />,
       },
       {

@@ -1,138 +1,137 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Avatar, Box, Button, TextField, Typography } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Button,
+  FormControl,
+  MenuItem,
+  Select,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
 import * as yup from "yup";
-import { useNavigate, useParams } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-// import { useAddusers, useRemoveusers, usersbyid, useUpdateusers } from "../../../hooks/redux/useuser";
-
-
+import { supabase } from "../../../hooks/utils/supabaseClient";
 
 
 const schema = yup.object().shape({
+  title: yup.string().trim().required("Title is required"),
+    description: yup.string().trim().required("Description is required"),
 
 });
 
 const UserAdd = () => {
+
+
+
   const navigate = useNavigate();
-  // const { id } = useParams();
-  const [loading, setLoading] = useState(false);
-  const [photoURL, setPhotoURL] = useState("");
-   const mutationAddusers = useAddusers();
-   const mutationUpdateusers = useUpdateusers();
-   const mutationRemoveusers =useRemoveusers();
- 
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
-    watch,
-    setValue,
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      username: "",
-      email: "",
-      password: "",
-
+      title: "",
+       description: "",
+   
     },
   });
 
- const { data, isLoding } = usersbyid(id);
-   console.log("data==========", data);
- 
-   useEffect(() => {
-     if (id && data) {
-       const { username,email,password } = data?.data || {};
-       reset({ username,email,password });
-     }
-   }, [id, data, reset]);
- 
-   const handlePhotoChange = (e) => {
-     const file = e.target.files[0];
-     if (file) {
-       setPhoto(file);
-       setPhotoURL(URL.createObjectURL(file));
-     }
-   };
- 
-   const onSubmit = async (data, mode) => {
-   setLoading(true);
-   try {
-     if (mode === "edit" && id) {
-       console.log("edit mode");
-       const response = await mutationUpdateusers.mutateAsync({ id, data });
-       if (response?.status === 200) {
-         toast("users Updated Successfully");
-         reset();
-         navigate("/admin/main/userlist");
-       }
-     } else {
-       console.log("create mode");
-       const response = await mutationAddusers.mutateAsync(data);
-       if (response?.status === 201) {
-         toast("users updated Successfully");
-         reset();
-         navigate("/admin/main/userlist");
-       }
-     }
-   } catch (error) {
-     // toast(error?.response?.data?.message);
-     console.error(error);
-   } finally {
-     setLoading(false);
-   }
- };
+  const handleFileChange = (event) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    } else {
+      setSelectedFile(null);
+      setPreviewUrl(null);
+    }
+  };
+
+  const onSubmit = async (data) => {
+    // console.log("Form Data:", { ...data, image: selectedFile });
+    if (selectedFile) {
+      const fileExt = selectedFile.name.split(".").pop();
+      const fileName = `${Date.now()}.${fileExt}`;
+      const filePath = `${fileName}`;
+      // console.log("Filepath",filePath);
+      const {error:uploadfileerror} = await supabase.storage.from("product-images").upload(filePath,selectedFile)
+      
+      if(uploadfileerror){
+        toast.error(uploadfileerror.message)
+        console.log("-----",uploadfileerror);
+        return
+        
+      }
+
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
+
 
   return (
-    <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ p: 4 }}>
-      <Typography variant="h5" gutterBottom>
-        {id ? "Edit" : "user"} 
+    <Box>
+      <Typography variant="h5" gutterBottom fontWeight={600}>
+        Add User
       </Typography>
 
-      <Box sx={{ display: "flex", gap: 4 }}>
-        <TextField
-          label="Username"
-          fullWidth
-          {...register("username")}
-          error={!!errors.username}
-          helperText={errors.username?.message}
-        />
-
-        <TextField
-          label="Email"
-          fullWidth
-          {...register("email")}
-          error={!!errors.email}
-          helperText={errors.email?.message}
-        />
-      </Box>
-
-      <Box sx={{ display: "flex", gap: 4, marginTop: 4,width:580 }}>
-        <TextField
-        label="password"
-            fullWidth
-            type="password"
-            margin="normal"
-            {...register("password")}
-            error={!!errors.password}
-            helperText={errors.password?.message}
-          />
-        
-      </Box>
-
-      <Button
-        fullWidth
-        type="submit"
-        variant="contained"
-        sx={{ mt: 2 }}
-        disabled={loading}
+      <Box
+        component="form"
+        onSubmit={handleSubmit(onSubmit)}
+        sx={{
+          mt: 2,
+          p: 3,
+          borderRadius: 2,
+          boxShadow: 3,
+          bgcolor: "#fff",
+        }}
       >
-        {id ? "UPDATE" : "SAVE"}
-      </Button>
+        <Stack direction={{ xs: "column", md: "row" }} spacing={4}>
+          {/* Left Section - Form Fields */}
+          <Stack spacing={3} sx={{ flex: 1 }}>
+            <TextField
+              label="Title"
+              required
+              placeholder="Enter User title"
+              fullWidth
+              {...register("title")}
+              error={!!errors.title}
+              helperText={errors.title?.message}
+            />
+
+             <TextField
+                          label="Description"
+                          required
+                          placeholder="Enter description"
+                          fullWidth
+                          multiline
+                          minRows={4}
+                          {...register("description")}
+                          error={!!errors.description}
+                          helperText={errors.description?.message}
+                        />
+            
+          </Stack>
+        </Stack>
+         <Box textAlign="right" mt={4}>
+                  <Button type="submit" variant="contained">
+                    Save
+                  </Button>
+                </Box>
+      </Box>
     </Box>
   );
 };
